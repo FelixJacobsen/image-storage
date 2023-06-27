@@ -1,7 +1,6 @@
 package feljac.tech.imagestorage.repository;
 
 import feljac.tech.imagestorage.ImageManipulation;
-import feljac.tech.imagestorage.service.ImageService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,12 +13,6 @@ import java.nio.file.Paths;
 
 @Repository
 public class FileSystemRepository {
-
-    private final ImageService imageService;
-
-    public FileSystemRepository(ImageService imageService) {
-        this.imageService = imageService;
-    }
 
     public void uploadImage(MultipartFile file, Path path, int targetSize) throws IOException {
         Files.createDirectories(path.getParent());
