@@ -3,9 +3,12 @@ package feljac.tech.imagestorage.service;
 import feljac.tech.imagestorage.entity.Image;
 import feljac.tech.imagestorage.repository.FileSystemRepository;
 import feljac.tech.imagestorage.repository.ImageRepository;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,7 +27,7 @@ public class ImageService {
         this.fileSystemRepository = fileSystemRepository;
     }
 
-    public Long uploadImage(MultipartFile multipartFile) {
+    public String uploadImage(MultipartFile multipartFile) {
         String pathToImage = setImagePath() + new Date().getTime() + multipartFile.getOriginalFilename();
         Path path = Paths.get(pathToImage);
         try {
@@ -35,7 +38,14 @@ public class ImageService {
         }
     }
 
-    private Long saveImageInformation(MultipartFile multipartFile, String pathToImage) {
+    public FileSystemResource downloadImage(String id) {
+
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return fileSystemRepository.findInFileSystem(image.getPath());
+    }
+
+    private String saveImageInformation(MultipartFile multipartFile, String pathToImage) {
         Image image = new Image();
         String imageName = multipartFile.getOriginalFilename();
         image.setName(imageName);
